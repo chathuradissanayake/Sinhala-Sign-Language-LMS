@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>සිංහල සංඥා භාෂා ඉගෙනුම් පද්ධතිය</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Mode Selection Screen */
+        .mode-selection {
+            text-align: center;
+        }
+
+        .mode-selection h2 {
+            color: #667eea;
+            margin-bottom: 40px;
+            font-size: 2em;
+        }
+
+        .mode-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .mode-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-10px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-card .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .mode-card h3 {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .mode-card p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .start-screen h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .letter-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .letter-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .letter-card.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+        }
+
+        /* Practice/Exam Screen */
+        .session-screen {
+            display: none;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .progress-info {
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .timer {
+            font-size: 2em;
+            color: #f5576c;
+            font-weight: bold;
+        }
+
+        .current-letter {
+            text-align: center;
+            margin: 30px 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .current-letter h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .current-letter .letter-display {
+            font-size: 8em;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .video-container {
+            position: relative;
+            margin: 30px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #webcam {
+            width: 100%;
+            height: auto;
+            display: block;
+            transform: scaleX(-1);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .prediction-display {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.3s;
+            border-radius: 5px;
+        }
+
+        /* Success Animation */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 1000;
+            animation: successPop 0.5s ease-out forwards;
+        }
+
+        @keyframes successPop {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .success-message .checkmark {
+            font-size: 5em;
+            color: #4CAF50;
+            animation: checkmarkPop 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes checkmarkPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-message h3 {
+            font-size: 2em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .success-message p {
+            font-size: 1.3em;
+            color: #666;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-header {
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 250px;
+            height: 250px;
+            margin: 30px auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-circle .percentage {
+            font-size: 4em;
+            font-weight: bold;
+        }
+
+        .score-circle .label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .results-details {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1.2em;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖐️ සිංහල සංඥා භාෂා ඉගෙනුම් පද්ධතිය</h1>
+            <p>Sinhala Sign Language Learning Management System</p>
+        </div>
+
+        <div class="content">
+            <!-- Mode Selection Screen -->
+            <div id="modeSelection" class="mode-selection">
+                <h2>Select Mode</h2>
+                <div class="mode-cards">
+                    <div class="mode-card" onclick="selectMode('practice')">
+                        <div class="icon">📚</div>
+                        <h3>Practice Mode</h3>
+                        <p>Choose letters to practice at your own pace. Get instant feedback and learn effectively.</p>
+                    </div>
+                    <div class="mode-card" onclick="selectMode('exam')">
+                        <div class="icon">📝</div>
+                        <h3>Exam Mode</h3>
+                        <p>Test yourself with 5 random letters. Each letter has 10 seconds. See your final score!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Start Screen -->
+            <div id="practiceStartScreen" class="start-screen">
+                <h2>Select Letters to Practice</h2>
+                <div id="letterGrid" class="letter-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading letters...
+                    </div>
+                </div>
+                <div>
+                    <button class="btn" onclick="selectAllLetters()">Select All</button>
+                    <button class="btn btn-secondary" onclick="clearSelection()">Clear</button>
+                    <button class="btn btn-back" onclick="backToModeSelection()">Back</button>
+                </div>
+                <button class="btn" onclick="startPractice()" style="margin-top: 30px;">
+                    Start Practice 🚀
+                </button>
+            </div>
+
+            <!-- Exam Start Screen -->
+            <div id="examStartScreen" class="start-screen">
+                <h2>Exam Mode</h2>
+                <div style="max-width: 600px; margin: 40px auto; text-align: left;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">Instructions:</h3>
+                    <ul style="font-size: 1.1em; line-height: 2; color: #666;">
+                        <li>5 random letters will be selected</li>
+                        <li>Each letter has 10 seconds</li>
+                        <li>Show the correct sign within the time</li>
+                        <li>No instant feedback during exam</li>
+                        <li>Results shown at the end</li>
+                    </ul>
+                </div>
+                <button class="btn" onclick="startExam()" style="margin-top: 30px;">
+                    Start Exam 📝
+                </button>
+                <button class="btn btn-back" onclick="backToModeSelection()">
+                    Back
+                </button>
+            </div>
+
+            <!-- Practice/Exam Screen -->
+            <div id="sessionScreen" class="session-screen">
+                <div class="session-header">
+                    <div class="progress-info">
+                        Progress: <span id="currentProgress">0</span> / <span id="totalProgress">0</span>
+                    </div>
+                    <div class="timer" id="timer" style="display: none;">10s</div>
+                    <button class="btn btn-secondary" onclick="resetBuffer()">Reset Buffer</button>
+                </div>
+
+                <div class="current-letter">
+                    <h2>Show this sign:</h2>
+                    <div class="letter-display" id="currentLetterDisplay">අ</div>
+                    <p style="margin-top: 10px; opacity: 0.8;" id="currentLetterEnglish">a_</p>
+                </div>
+
+                <div class="video-container">
+                    <video id="webcam" autoplay playsinline></video>
+                    <div class="video-overlay">
+                        <div class="prediction-display">
+                            Detected: <span id="predictedSign">Warming up...</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="results-screen">
+                <div class="results-header">
+                    <h2 id="resultsTitle">🎉 Complete!</h2>
+                </div>
+
+                <div class="score-circle">
+                    <div class="percentage" id="scorePercentage">0%</div>
+                    <div class="label">Success Rate</div>
+                </div>
+
+                <div class="results-details">
+                    <div class="stat-row">
+                        <span class="stat-label">Total Letters:</span>
+                        <span class="stat-value" id="totalLetters">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Correct:</span>
+                        <span class="stat-value" id="completedLetters">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Success Rate:</span>
+                        <span class="stat-value" id="successRate">0%</span>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="restartSession()">Try Again 🔄</button>
+                <button class="btn btn-back" onclick="backToModeSelection()">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let currentMode = null;
+        let selectedLetters = [];
+        let sessionId = null;
+        let ws = null;
+        let videoStream = null;
+        let frameInterval = null;
+        let timerInterval = null;
+        let timeRemaining = 10;
+
+        // Mode Selection
+        function selectMode(mode) {
+            currentMode = mode;
+            document.getElementById('modeSelection').style.display = 'none';
+            
+            if (mode === 'practice') {
+                document.getElementById('practiceStartScreen').style.display = 'block';
+                loadLetters();
+            } else if (mode === 'exam') {
+                document.getElementById('examStartScreen').style.display = 'block';
+            }
+        }
+
+        function backToModeSelection() {
+            // Hide all screens
+            document.getElementById('practiceStartScreen').style.display = 'none';
+            document.getElementById('examStartScreen').style.display = 'none';
+            document.getElementById('sessionScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'none';
+            
+            // Show mode selection
+            document.getElementById('modeSelection').style.display = 'block';
+            
+            // Cleanup
+            cleanupSession();
+            selectedLetters = [];
+            currentMode = null;
+        }
+
+        // Load available letters for practice mode
+        async function loadLetters() {
+            try {
+                const response = await fetch(`${API_URL}/api/letters`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                const grid = document.getElementById('letterGrid');
+                grid.innerHTML = '';
+                
+                if (data.letters.length === 0) {
+                    grid.innerHTML = '<div style="padding: 20px; text-align: center;">No letters found. Check your model!</div>';
+                    return;
+                }
+                
+                data.letters.forEach(letter => {
+                    const card = document.createElement('div');
+                    card.className = 'letter-card';
+                    card.textContent = letter.sinhala;
+                    card.dataset.id = letter.id;
+                    card.onclick = () => toggleLetter(card, letter.id);
+                    grid.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error loading letters:', error);
+                const grid = document.getElementById('letterGrid');
+                grid.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #f44336;">
+                        <p><strong>Failed to connect to backend!</strong></p>
+                        <p style="margin-top: 10px;">Make sure the server is running on port 8000</p>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleLetter(card, letterId) {
+            card.classList.toggle('selected');
+            const index = selectedLetters.indexOf(letterId);
+            if (index > -1) {
+                selectedLetters.splice(index, 1);
+            } else {
+                selectedLetters.push(letterId);
+            }
+        }
+
+        function selectAllLetters() {
+            document.querySelectorAll('.letter-card').forEach(card => {
+                card.classList.add('selected');
+                const letterId = card.dataset.id;
+                if (!selectedLetters.includes(letterId)) {
+                    selectedLetters.push(letterId);
+                }
+            });
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.letter-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            selectedLetters = [];
+        }
+
+        // Start Practice
+        async function startPractice() {
+            if (selectedLetters.length === 0) {
+                alert('Please select at least one letter!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/practice/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ letters: selectedLetters })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                sessionId = data.session_id;
+                
+                document.getElementById('totalProgress').textContent = data.total_letters;
+                document.getElementById('practiceStartScreen').style.display = 'none';
+                document.getElementById('sessionScreen').style.display = 'block';
+                document.getElementById('timer').style.display = 'none';
+                
+                await startWebcam();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                connectWebSocket('practice');
+                
+            } catch (error) {
+                console.error('Error starting practice:', error);
+                alert('Failed to start practice: ' + error.message);
+            }
+        }
+
+        // Start Exam
+        async function startExam() {
+            try {
+                const response = await fetch(`${API_URL}/api/exam/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                sessionId = data.session_id;
+                
+                document.getElementById('totalProgress').textContent = data.total_letters;
+                document.getElementById('examStartScreen').style.display = 'none';
+                document.getElementById('sessionScreen').style.display = 'block';
+                document.getElementById('timer').style.display = 'block';
+                
+                await startWebcam();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                connectWebSocket('exam');
+                
+            } catch (error) {
+                console.error('Error starting exam:', error);
+                alert('Failed to start exam: ' + error.message);
+            }
+        }
+
+        async function startWebcam() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 1280, height: 720 } 
+                });
+                document.getElementById('webcam').srcObject = videoStream;
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+                alert('Cannot access webcam. Please grant permission!');
+            }
+        }
+
+        function connectWebSocket(mode) {
+            const wsUrl = `ws://localhost:8000/ws/${mode}/${sessionId}`;
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                startSendingFrames();
+            };
+            
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleWebSocketMessage(message);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                alert('Connection error. Please check if the backend is running.');
+            };
+            
+            ws.onclose = (event) => {
+                console.log('WebSocket closed');
+                stopSendingFrames();
+            };
+        }
+
+        function startSendingFrames() {
+            const video = document.getElementById('webcam');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            frameInterval = setInterval(() => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0);
+                    
+                    const frameData = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            type: 'frame',
+                            frame: frameData
+                        }));
+                    }
+                }
+            }, 100);
+        }
+
+        function stopSendingFrames() {
+            if (frameInterval) {
+                clearInterval(frameInterval);
+                frameInterval = null;
+            }
+        }
+
+        function startTimer() {
+            timeRemaining = 10;
+            document.getElementById('timer').textContent = timeRemaining + 's';
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('timer').textContent = timeRemaining + 's';
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        function handleWebSocketMessage(message) {
+            switch (message.type) {
+                case 'next_letter':
+                    updateCurrentLetter(message.letter, message.progress);
+                    if (currentMode === 'exam') {
+                        startTimer();
+                    }
+                    break;
+                    
+                case 'prediction':
+                    updatePrediction(message);
+                    break;
+                    
+                case 'success':
+                    showSuccessMessage(message.letter);
+                    break;
+                    
+                case 'practice_complete':
+                    showResults(message.results, 'Practice');
+                    break;
+                    
+                case 'exam_complete':
+                    showResults(message.results, 'Exam');
+                    break;
+                    
+                case 'error':
+                    console.error('Server error:', message.message);
+                    alert('Error: ' + message.message);
+                    break;
+            }
+        }
+
+        function updateCurrentLetter(letter, progress) {
+            document.getElementById('currentLetterDisplay').textContent = letter.sinhala;
+            document.getElementById('currentLetterEnglish').textContent = letter.english;
+            document.getElementById('currentProgress').textContent = progress.current;
+        }
+
+        function updatePrediction(data) {
+            const predictedElement = document.getElementById('predictedSign');
+            const confidenceFill = document.getElementById('confidenceFill');
+            
+            if (data.predicted && data.buffer_filled) {
+                const letterMapping = {
+                    'a_': 'අ', 'aa_': 'ආ', 'aae_': 'ඇ', 'ae_': 'ඈ',
+                    'e_': 'එ', 'ee_': 'ඒ', 'i_': 'ඉ', 'ii_': 'ඊ',
+                    'u_': 'උ', 'uu_': 'ඌ', 'unknown': '?'
+                };
+                
+                predictedElement.textContent = letterMapping[data.predicted] || data.predicted;
+                confidenceFill.style.width = (data.confidence * 100) + '%';
+                
+                if (data.confidence > 0.85) {
+                    confidenceFill.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)';
+                } else if (data.confidence > 0.7) {
+                    confidenceFill.style.background = 'linear-gradient(90deg, #FFC107 0%, #FF9800 100%)';
+                } else {
+                    confidenceFill.style.background = 'linear-gradient(90deg, #f093fb 0%, #f5576c 100%)';
+                }
+            } else {
+                predictedElement.textContent = data.buffer_filled ? 'Detecting...' : 'Warming up...';
+                confidenceFill.style.width = '0%';
+            }
+        }
+
+        function showSuccessMessage(letter) {
+            // Only show success in practice mode
+            if (currentMode !== 'practice') return;
+            
+            const message = document.createElement('div');
+            message.className = 'success-message';
+            message.innerHTML = `
+                <div class="checkmark">✓</div>
+                <h3>${letter.sinhala}</h3>
+                <p>අකුර සාර්ථකව සම්පූර්ණ කරන ලදී!</p>
+                <p style="margin-top: 10px; font-size: 1em; opacity: 0.7;">Letter completed successfully!</p>
+            `;
+            
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.animation = 'successPop 0.3s ease-in reverse forwards';
+                setTimeout(() => message.remove(), 300);
+            }, 1500);
+        }
+
+        function showResults(results, mode) {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            cleanupSession();
+            
+            document.getElementById('sessionScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            document.getElementById('resultsTitle').textContent = 
+                mode === 'Practice' ? '🎉 Practice Complete!' : '📝 Exam Complete!';
+            
+            const targetScore = Math.round(results.success_rate);
+            animateScore(targetScore);
+            
+            document.getElementById('totalLetters').textContent = results.total;
+            document.getElementById('completedLetters').textContent = 
+                results.correct !== undefined ? results.correct : results.completed;
+            document.getElementById('successRate').textContent = targetScore + '%';
+        }
+
+        function animateScore(target) {
+            const element = document.getElementById('scorePercentage');
+            let current = 0;
+            const increment = target / 50;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(current) + '%';
+            }, 30);
+        }
+
+        function resetBuffer() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'reset' }));
+                document.getElementById('predictedSign').textContent = 'Buffer reset...';
+                document.getElementById('confidenceFill').style.width = '0%';
+            }
+        }
+
+        function cleanupSession() {
+            stopSendingFrames();
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function restartSession() {
+            selectedLetters = [];
+            sessionId = null;
+            
+            document.getElementById('resultsScreen').style.display = 'none';
+            
+            if (currentMode === 'practice') {
+                document.getElementById('practiceStartScreen').style.display = 'block';
+                clearSelection();
+            } else if (currentMode === 'exam') {
+                document.getElementById('examStartScreen').style.display = 'block';
+            }
+        }
+
+        // Initialize on page load
+        window.onload = () => {
+            // Show mode selection by default
+        };
+
+        // Cleanup on page unload
+        window.onbeforeunload = () => {
+            cleanupSession();
+        };
+    </script>
+</body>
+</html>
